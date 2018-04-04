@@ -20,7 +20,7 @@ export HISTIGNORE=" *:ls:cd:cd -:pwd:exit:date:* --help:* -h:pony:pony add *:pon
 export MANPAGER="less -X";
 # make less more friendly for non-text input files, see lesspipe(1)
 [ -x /usr/bin/lesspipe ] && export LESSOPEN="|lesspipe %s"
-export GREP_OPTIONS='--binary-files=without-match --ignore-case --color=auto'
+alias grep='grep -Iir --color=auto'
 
 # Shell keybindings
 zle -C hist-complete complete-word _generic
@@ -55,7 +55,6 @@ if [ -x /usr/bin/dircolors ]; then
 	alias ls='ls --color=auto'
 	alias dir='dir --color=auto'
 	alias vdir='vdir --color=auto'
-	alias grep='grep --color=auto'
 	alias fgrep='fgrep --color=auto'
 	alias egrep='egrep --color=auto'
 fi
