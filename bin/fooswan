@@ -64,6 +64,22 @@ function _install_conan() {
     }
 }
 
+function _install_vscode() {
+    local flavor
+    _pinfo "Installing Visual Studio Code on this sytem."
+    command -v code >/dev/null 2>&1 || {
+        if [[ "${flavor}" == "fedora" ]] ; then
+            sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
+            sudo sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo'
+            dnf check-update
+            sudo dnf install code dbus-devel gtk3-devel libnotify-devel \
+                     libgnome-keyring-devel xorg-x11-server-utils libcap-devel \
+                     cups-devel libXtst-devel alsa-lib-devel libXrandr-devel \
+                     GConf2-devel nss-devel
+        fi
+    }
+}
+
 function _configure_neovim() {
     _pinfo "Configuring neovim"
     # User alias vim dotfiles to neovim
