@@ -56,6 +56,14 @@ function _install_zsh() {
     }
 }
 
+function _install_conan() {
+    _pinfo "Installing Conan on this sytem."
+    command -v conan >/dev/null 2>&1 || {
+        sudo pip3 install conan;
+        conan profile new --detect default;
+    }
+}
+
 function _configure_neovim() {
     _pinfo "Configuring neovim"
     # User alias vim dotfiles to neovim
@@ -184,6 +192,7 @@ function _main() {
     if [[ "${__install_basic_tools:-}" == true  ]]; then
         _install_basic_tools
         _install_zsh
+        _install_conan
         _configure_neovim
     fi
     if [[ "${__symlinks_dotfiles:-}" == true  ]]; then
