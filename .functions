@@ -1,0 +1,8 @@
+function fdnfgroup() {
+   fdnfgroup_usage() { echo "fdnfgroup <package>"; return 0; }
+   if [[ -z ${1+x} || ${1} == "" ]] ; then fdnfgroup_usage; return 1; fi
+   local pkg
+   pkg="${1}"
+   dnf groupinfo '*' | sed -n '/Group:/h;/'"${pkg}"'/{x;p;x;p}'
+   return 0
+}

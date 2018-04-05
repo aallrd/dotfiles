@@ -1,7 +1,7 @@
 #!/bin/zsh
 
 # Load the dotfiles
-for file in ~/.{aliases,dockerfunc}; do
+for file in ~/.{aliases,dockerfunc,functions}; do
 	if [[ -r "$file" ]] && [[ -f "$file" ]]; then
 		source "$file"
 	fi
