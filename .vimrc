@@ -66,12 +66,10 @@ set conceallevel=0              " do not hide markdown
 set wrap                        " Make Vim to handle long lines nicely.
 set textwidth=79
 set formatoptions=qrn1
-set autoindent
 set complete=.,w,b,u,t          " Better Completion
 set completeopt=longest,menuone
 set showmatch                   " Show matching brackets when text indicator is over them
-set smarttab                    " Be smart when using tabs
-set et
+set autoindent
 set expandtab                   " Use spaces instead of tabs
 set shiftwidth=4                " 1 tab == 4 spaces
 set tabstop=4                   " 1 tab == 4 spaces
