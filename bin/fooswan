@@ -113,6 +113,13 @@ function _configure_neovim() {
     return 0
 }
 
+function _configure_python() {
+	_pinfo "Configuring default system Python to be Python 3"
+	sudo update-alternatives --install /usr/bin/python python "$(which python3)" 1
+	echo 1 | sudo update-alternatives --config python
+	return 0
+}
+
 function _configure_system_sudo() {
     local flavor
     _pinfo "Configuring the user ${TARGET_USER:-$(id -u -n)} as a passwordless sudoer"
@@ -212,6 +219,7 @@ function _main() {
         _install_zsh
         _install_conan
         _configure_neovim
+        _configure_python
     fi
     if [[ "${__symlinks_dotfiles:-}" == true  ]]; then
         _symlinks_dotfiles
