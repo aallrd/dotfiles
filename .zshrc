@@ -26,6 +26,8 @@ alias grep='grep -Iir --color=auto'
 zle -C hist-complete complete-word _generic
 zstyle ':completion:hist-complete:*' completer _history
 bindkey '^X^X' hist-complete
+bindkey "${terminfo[khome]}" beginning-of-line
+bindkey "${terminfo[kend]}" end-of-line
 # Treat  the ‘#’, ‘~’ and ‘^’ characters as part of patterns for filename generation, etc.  (An initial unquoted ‘~’ always produces named directory expansion.)
 setopt EXTENDED_GLOB
 # Case-insensitive globbing (used in pathname expansion)
