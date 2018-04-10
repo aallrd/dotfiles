@@ -19,6 +19,9 @@
 [submodule ".vim/bundle/deoplete.nvim"]
 	path = .vim/bundle/deoplete.nvim
 	url = https://github.com/Shougo/deoplete.nvim.git
+[submodule ".vim/bundle/deoplete-jedi"]
+	path = .vim/bundle/deoplete-jedi
+	url = https://github.com/zchee/deoplete-jedi.git
 [submodule ".vim/bundle/vim-multiple-cursors"]
 	path = .vim/bundle/vim-multiple-cursors
 	url = https://github.com/terryma/vim-multiple-cursors.git

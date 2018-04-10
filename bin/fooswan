@@ -104,7 +104,7 @@ function _configure_neovim() {
     # install things needed for deoplete for vim
     sudo env PATH="${PATH}" pacapt --noconfirm -Sy || true
     sudo env PATH="${PATH}" pacapt --noconfirm -S python3-pip python3-setuptools
-    pip3 install --user -U pip setuptools wheel neovim
+    pip install --user -U pip setuptools wheel neovim jedi
     git submodule update --init --recursive || { _perror "Failed to initialize the vim configuration submodules."; return 1; }
     git submodule foreach git pull --recurse-submodules origin master || { _perror "Failed to pull the latest version of the vim configuration submodules."; return 1; }
     _psuccess "Installed VIM plugins:"
@@ -220,8 +220,8 @@ function _main() {
         _install_basic_tools
         _install_zsh
         _install_conan
-        _configure_neovim
         _configure_python
+        _configure_neovim
     fi
     if [[ "${__symlinks_dotfiles:-}" == true  ]]; then
         _symlinks_dotfiles
