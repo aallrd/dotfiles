@@ -116,7 +116,9 @@ function _configure_neovim() {
 function _configure_python() {
 	_pinfo "Configuring default system Python to be Python 3"
 	sudo update-alternatives --install /usr/bin/python python "$(which python3)" 1
+	sudo update-alternatives --install /usr/bin/pip pip "$(which pip3)" 1
 	echo 1 | sudo update-alternatives --config python
+	echo 1 | sudo update-alternatives --config pip
 	return 0
 }
 
