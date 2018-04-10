@@ -1,9 +1,6 @@
 " load plugins
 execute pathogen#infect()
 call pathogen#helptags()
-
-set nocompatible              " be iMproved, required
-filetype off                  " required
 filetype plugin indent on     " required
 
 " ----------------------------------------- "
@@ -48,7 +45,7 @@ set ttyfast
 " set ttyscroll=3               " noop on linux ?
 set lazyredraw                  " Wait to redraw "
 set t_Co=256                    " Enable syntax highlighting
-syntax enable                   " Enable syntax highlighting
+syntax on                       " Enable syntax highlighting
 set background=dark             " Enable syntax highlighting
 let g:solarized_termcolors=256  " Enable syntax highlighting
 let g:solarized_termtrans=1     " Enable syntax highlighting
