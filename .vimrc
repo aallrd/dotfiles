@@ -47,8 +47,6 @@ set lazyredraw                  " Wait to redraw "
 set t_Co=256                    " Enable syntax highlighting
 syntax on                       " Enable syntax highlighting
 set background=dark             " Enable syntax highlighting
-let g:solarized_termcolors=256  " Enable syntax highlighting
-let g:solarized_termtrans=1     " Enable syntax highlighting
 colorscheme solarized           " Enable syntax highlighting
 set guifont=Inconsolata:h15     " Enable syntax highlighting
 set guioptions-=L
@@ -335,9 +333,6 @@ let NERDTreeIgnore=['\.vim$', '\~$', '\.git$', '.DS_Store']
 " Close nerdtree and vim on close file
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
 
-" ==================== vim-json ====================
-let g:vim_json_syntax_conceal = 0
-
 " ==================== Completion =========================
 " use deoplete for Neovim.
 if has('nvim')
@@ -373,7 +368,6 @@ function! Multiple_cursors_after()
 endfunction
 
 " =================== vim-airline ========================
-
 let g:airline_theme='solarized'
 
 " set to use powerline fonts when not in a ssh session
@@ -381,8 +375,6 @@ let g:remoteSession = ($STY == "")
 if !g:remoteSession
   let g:airline_powerline_fonts=1
 endif
-
-" vim:ts=2:sw=2:et
 
 " ==================== Undotree ====================
 if has("persistent_undo")
@@ -399,3 +391,5 @@ let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
+
+" vim:ts=2:sw=2:et
