@@ -108,9 +108,6 @@ vnoremap <silent> # :call VisualSelection('b')<CR>          " Visual mode pressi
 " CTRL-U in insert mode deletes a lot.  Use CTRL-G u to first break undo,
 " so that you can undo CTRL-U after inserting a line break.
 inoremap <C-U> <C-G>u<C-U>
-" Dont show me any output when I build something
-" Because I am using quickfix for errors
-nmap <leader>m :make<CR><enter>
 " Some useful quickfix shortcuts
 ":cc      see the current error
 ":cn      next error
