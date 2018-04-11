@@ -331,12 +331,6 @@ if has('nvim')
 endif
 
 " ==================== vim-multiple-cursors ====================
-let g:multi_cursor_use_default_mapping=0
-let g:multi_cursor_next_key='<C-i>'
-let g:multi_cursor_prev_key='<C-y>'
-let g:multi_cursor_skip_key='<C-b>'
-let g:multi_cursor_quit_key='<Esc>'
-
 " Called once right before you start selecting multiple cursors
 function! Multiple_cursors_before()
   if exists(':NeoCompleteLock')==2
