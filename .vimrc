@@ -66,11 +66,11 @@ set completeopt=longest,menuone
 set showmatch                   " Show matching brackets when text indicator is over them
 set autoindent
 set expandtab                   " Use spaces instead of tabs
-set shiftwidth=4                " 1 tab == 4 spaces
-set tabstop=4                   " 1 tab == 4 spaces
-set bs=2
-set ts=4
-set sw=4
+set shiftwidth=2                " 1 tab == 2 spaces
+set tabstop=2                   " 1 tab == 2 spaces
+set bs=1
+set ts=2
+set sw=2
 set magic                       " For regular expressions turn magic on
 set wildignore=*.o,*~,*.pyc     " Ignore compiled files
 set nrformats-=octal
