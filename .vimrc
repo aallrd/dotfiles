@@ -18,8 +18,6 @@ set novisualbell                " No annoying sound on errors
 set t_vb=                       " No annoying sound on errors
 set tm=500                      " No annoying sound on errors
 set number                      " Show line numbers
-set backspace=indent,eol,start  " Makes backspace key more powerful
-set whichwrap+=<,>,h,l          " Configure backspace so it acts as it should act
 set showcmd                     " Show me what I'm typing
 set showmode                    " Show current mode.
 set nobackup                    " Turn backup off, since most stuff is in SVN, git et.c anyway...
@@ -81,6 +79,8 @@ set ttimeoutlen=10              " Time out on key codes but not mappings. Basica
 set history=3000                " Sets how many lines of history VIM has to remember
 set display+=lastline
 set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l          " Format the status line
+set backspace=indent,eol,start  " Makes backspace key more powerful
+set whichwrap+=<,>,h,l          " Configure backspace so it acts as it should act
 if !empty(&viminfo)
   set viminfo^=!
 endif
@@ -307,7 +307,7 @@ vnoremap <leader>gb :Gblame<CR>
 
 "==================== NerdTree ====================
 " For toggling
-nmap <C-n> :NERDTreeToggle<CR>
+nmap <C-o> :NERDTreeToggle<CR>
 noremap <Leader>f :NERDTreeFind<cr>
 let NERDTreeShowHidden=1
 let NERDTreeIgnore=['\.vim$', '\~$', '\.git$', '.DS_Store']
