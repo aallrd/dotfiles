@@ -323,6 +323,13 @@ if has('nvim')
   call deoplete#custom#source('_', 'disabled_syntaxes', ['Comment', 'String'])
 endif
 
+" ==================== Linting =========================
+let g:ale_fixers = {
+\   'shell': ['shellcheck'],
+\}
+" Fix files when you save them.
+let g:ale_fix_on_save = 1
+
 " ==================== vim-multiple-cursors ====================
 " Called once right before you start selecting multiple cursors
 function! Multiple_cursors_before()
@@ -353,17 +360,5 @@ if has("persistent_undo")
     set undofile
 endif
 nnoremap <C-u> :UndotreeToggle<CR>
-
-" ==================== Syntastic ====================
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
-let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes':   [],'passive_filetypes': [] }
-noremap <C-w>e :SyntasticCheck<CR>
-noremap <C-w>f :SyntasticToggleMode<CR>
 
 " vim:ts=2:sw=2:et
