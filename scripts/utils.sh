@@ -175,7 +175,7 @@ function _isinteger() {
 }
 
 # This function is used to check that the given key is in the given array.
-# ${1} : String, the value to look for 
+# ${1} : String, the value to look for
 # ${2} : Array, the values to look at
 # Usage: array=(aa bb cc) && _isinarray "aa" ${array[@]}
 function _isinarray() {
@@ -360,9 +360,9 @@ function _get_local_os_name() {
     elif [[ "$(uname)" == "Linux" ]]; then
         system="$(_get_linux_flavor)"
         if [[ "${system}" == "rhel" ]] ; then
-            release="$(_get_rhel_release)" 
+            release="$(_get_rhel_release)"
         elif [[ "${system}" == "fedora" ]] ; then
-            release="$(_get_fedora_release)" 
+            release="$(_get_fedora_release)"
         else
             _perror "Cannot check the release version of ${system}" && return 1
         fi
