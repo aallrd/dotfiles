@@ -99,7 +99,9 @@ let &t_EI .= "\<Esc>[?2004l"   " never do this again --> :set paste <ctrl-v> :se
 map <space> /                                               " Map <Space> to / forward search
 map <c-space> ?                                             " Map Ctrl-<Space> to ? backwards search
 map <F7> mzgg=G`z`                                          " Reindent file
-nnoremap <leader>n :set nonumber!<CR>
+" Delete trailing whitespace
+nnoremap <silent> <F8> :let _s=@/ <Bar> :%s/\s\+$//e <Bar> :let @/=_s <Bar> :nohl <Bar> :unlet _s <CR>
+nnoremap <leader>n :set nonumber!<CR>                       " Enable/disable line numbering
 nnoremap <leader>rn :set norelativenumber!<CR>
 nnoremap <leader>pa :set nopaste!<CR>
 nnoremap <Leader>m mmHmt:%s/<C-V><cr>//ge<cr>'tzt'm         " Remove the Windows ^M - when the encodings gets messed up
