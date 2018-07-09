@@ -326,6 +326,7 @@ endif
 " ==================== Linting =========================
 let g:ale_fixers = {
 \   'shell': ['shellcheck'],
+\   'dockerfile': ['hadolint'],
 \}
 " Fix files when you save them.
 let g:ale_fix_on_save = 1

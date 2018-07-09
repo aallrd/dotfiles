@@ -41,6 +41,18 @@ function _install_basic_tools() {
 	return 0
 }
 
+function _install_advanced_tools() {
+	_pinfo "Installing the advanced tools"
+	sudo wget https://github.com/hadolint/hadolint/releases/download/v1.10.1/hadolint-Linux-x86_64 -O /usr/local/bin/hadolint
+	sudo chmod +x /usr/local/bin/hadolint
+	if [[ $? -ne 0 ]] ; then
+		_pwarning "An error may have occured while installing the advanced tools."
+	else
+		_psuccess "The advanced tools were installed successfully."
+	fi
+	return 0
+}
+
 function _install_zsh() {
 	_pinfo "Installing ZSH on this sytem."
 	command -v zsh >/dev/null 2>&1 || {
@@ -228,6 +240,7 @@ function _main() {
 	fi
 	if [[ "${__install_basic_tools:-}" == true  ]]; then
 		_install_basic_tools
+		_install_advanced_tools
 		_install_zsh
 		_install_conan
 		_configure_python
