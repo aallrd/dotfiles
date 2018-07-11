@@ -27,7 +27,36 @@ function _usage_main() {
 
 function _install_basic_tools() {
 	_pinfo "Installing the basic tools"
-	basic_tools=(ca-certificates curl wget automake make bash-completion bc bzip2 coreutils file findutils gcc git grep gzip hostname indent jq less lsof neovim sudo tar tree unzip xclip tmux tig ShellCheck)
+	basic_tools=(
+		ca-certificates
+		curl
+		wget
+		automake
+		make
+		bash-completion
+		bc
+		coreutils
+		file
+		findutils
+		gcc
+		git
+		grep
+		gzip
+		hostname
+		indent
+		jq
+		less
+		lsof
+		neovim
+		sudo
+		tar
+		tree
+		unzip
+		xclip
+		tmux
+		tig
+		ShellCheck
+	)
 	# pacapt is not available in the secure path
 	sudo env PATH="${PATH}" pacapt --noconfirm -Sy || true
 	# shellcheck disable=SC2068
