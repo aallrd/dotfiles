@@ -22,6 +22,9 @@ export MANPAGER="less -X";
 [ -x /usr/bin/lesspipe ] && export LESSOPEN="|lesspipe %s"
 alias grep='grep -Iir --color=auto'
 
+PATH="${PATH}:/home/${USER}/.local/bin"
+export PATH
+
 # Shell keybindings
 zle -C hist-complete complete-word _generic
 zstyle ':completion:hist-complete:*' completer _history
@@ -36,10 +39,10 @@ setopt nocaseglob
 setopt NOMATCH
 # no Beep on error in ZLE.
 setopt NO_BEEP
-# Remove any right prompt from display when accepting a command line. 
+# Remove any right prompt from display when accepting a command line.
 # This may be useful with terminals with other cut/paste methods.
 setopt TRANSIENT_RPROMPT
-# If unset, the cursor is set to the end of the word if completion is started. 
+# If unset, the cursor is set to the end of the word if completion is started.
 # Otherwise it stays there and completion is done from both ends.
 setopt COMPLETE_IN_WORD
 # Make cd push the old directory onto the directory stack.
@@ -53,28 +56,28 @@ unsetopt correct_all
 
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
-	test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-	alias ls='ls --color=auto'
-	alias dir='dir --color=auto'
-	alias vdir='vdir --color=auto'
-	alias fgrep='fgrep --color=auto'
-	alias egrep='egrep --color=auto'
+  test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+  alias ls='ls --color=auto'
+  alias dir='dir --color=auto'
+  alias vdir='vdir --color=auto'
+  alias fgrep='fgrep --color=auto'
+  alias egrep='egrep --color=auto'
 fi
 
 # solarize the shell
 if tput setaf 1 &> /dev/null; then
-    tput sgr0; # reset colors
-    bold=$(tput bold);
-    reset=$(tput sgr0);
-    # Solarized colors, taken from http://git.io/solarized-colors.
-    black=$(tput setaf 0);
-    blue=$(tput setaf 33);
-    cyan=$(tput setaf 37);
-    green=$(tput setaf 64);
-    orange=$(tput setaf 166);
-    purple=$(tput setaf 125);
-    red=$(tput setaf 124);
-    violet=$(tput setaf 61);
-    white=$(tput setaf 15);
-    yellow=$(tput setaf 136);
+  tput sgr0; # reset colors
+  bold=$(tput bold);
+  reset=$(tput sgr0);
+  # Solarized colors, taken from http://git.io/solarized-colors.
+  black=$(tput setaf 0);
+  blue=$(tput setaf 33);
+  cyan=$(tput setaf 37);
+  green=$(tput setaf 64);
+  orange=$(tput setaf 166);
+  purple=$(tput setaf 125);
+  red=$(tput setaf 124);
+  violet=$(tput setaf 61);
+  white=$(tput setaf 15);
+  yellow=$(tput setaf 136);
 fi
