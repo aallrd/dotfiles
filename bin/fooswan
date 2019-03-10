@@ -193,6 +193,9 @@ function _configure_system_sudo() {
 	elif [[ "${flavor}" == "rhel" ]] ; then
 		sudo usermod -aG wheel "${TARGET_USER:-$(id -u -n)}" >/dev/null
 		sudo sed -i 's/^#\s*\(%wheel\s\+ALL=(ALL)\s\+NOPASSWD:\s\+ALL\)/\1/' /etc/sudoers
+	elif [[ "${flavor}" == "ubuntu" ]] ; then
+		sudo adduser "${TARGET_USER:-$(id -u -n)}" sudo >/dev/null
+		sudo bash -c "echo \"${TARGET_USER:-$(id -u -n)} ALL=(ALL) NOPASSWD:ALL\" > \"/etc/sudoers.d/${TARGET_USER:-$(id -u -n)}\""
 	else
 		_perror "Cannot setup sudo on this system: ${flavor}" && return 1
 	fi
@@ -258,7 +261,7 @@ function _symlinks_dotfiles() {
 
 function _system_check() {
 	local supported_sys
-	supported_sys=(fedora rhel)
+	supported_sys=(fedora rhel ubuntu)
 	__sys=$(_get_linux_flavor)
 	if ! _isinarray "${__sys}" "${supported_sys[@]}" ; then
 		_perror "System is not supported: ${__sys}"
