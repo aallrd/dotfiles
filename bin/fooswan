@@ -235,7 +235,7 @@ function _symlinks_dotfiles() {
 	# Adding aliases for dotfiles
 	_pinfo "Creating symlinks for dotfiles"
 	# shellcheck disable=SC2044
-	for file in $(find "$(pwd)" -name ".*" -not -name ".gitignore" -not -name ".git"); do
+	for file in $(find "$(pwd)" -maxdepth 1 -name ".*" -not -name ".gitignore" -not -name ".git"); do
 		f="$(basename "${file}")"
 		ln -sfn "${file}" "${HOME}/${f}"
 		# shellcheck disable=SC2181
