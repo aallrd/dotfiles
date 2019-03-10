@@ -280,7 +280,7 @@ function _get_sunos_release() {
 function _get_linux_flavor() {
     local flavor os version
     # Older Red Hat, CentOS, etc
-    if [[ ! -h /etc/redhat-release ]] ; then
+    if [[ -e /etc/redhat-release && ! -h /etc/redhat-release ]] ; then
         flavor="rhel"
         # freedesktop.org and systemd
     elif [[ -f /etc/os-release ]]; then
