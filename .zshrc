@@ -81,3 +81,4 @@ if tput setaf 1 &> /dev/null; then
   white=$(tput setaf 15);
   yellow=$(tput setaf 136);
 fi
+alias cat='bat'
