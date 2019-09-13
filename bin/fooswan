@@ -56,6 +56,7 @@ function _install_basic_tools() {
 		tmux
 		tig
 		ShellCheck
+		fzf
 	)
 	# pacapt is not available in the secure path
 	sudo env PATH="${PATH}" pacapt --noconfirm -Sy || true
