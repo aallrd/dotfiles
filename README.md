@@ -11,6 +11,13 @@
     # Performing full installation
     $ make
 
+## Updating
+
+```
+$ git submodule foreach git pull origin master
+$ git submodule update .vim/bundle/*
+```
+
 ## Sources 
 
 - [pacapt](https://github.com/icy/pacapt)
