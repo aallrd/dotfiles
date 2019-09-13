@@ -1,27 +1,31 @@
+#!/usr/bin/env bash
+
+# vim: set tabstop=2 shiftwidth=2 expandtab:
+
 function _bootstrap() {
-    local repo_git_url repo_raw_files requirements
-    repo_git_url='https://github.com/aallrd/dotfiles.git'
-    repo_raw_files='https://raw.githubusercontent.com/aallrd/dotfiles/master'
-    requirements=("git" "find" "sudo")
-    for requirement in "${requirements[@]}" ; do
-        command -v "${requirement}" >/dev/null 2>&1 || {
-            [[ "${requirement}" = "find"  ]] && requirement="findutils"
-            printf "\e[1;35mInstalling %s on the system...\e[0m " "${requirement}"
-            (while :; do for c in / - \\ \|; do printf '%s\b' "$c"; sleep 1; done; done) &
-            curl -s ${repo_raw_files}/bin/pacapt | bash /dev/stdin --noconfirm -S "${requirement}" >/dev/null
-            { echo -ne "\b"; printf ' \e[1;35m[DONE]\e[0m\n'; kill $! && wait $!; } 2>/dev/null
-        }
-    done
-    command -v git >/dev/null 2>&1 || {
-        echo -e "\e[1;31mFailed to install git on the system, cannot clone the dotfiles repo.\e[0m";
-        return 1;
+  local repo_git_url repo_raw_files requirements
+  repo_git_url='https://github.com/aallrd/dotfiles.git'
+  repo_raw_files='https://raw.githubusercontent.com/aallrd/dotfiles/master'
+  requirements=("git" "find" "sudo")
+  for requirement in "${requirements[@]}" ; do
+    command -v "${requirement}" >/dev/null 2>&1 || {
+      [[ "${requirement}" = "find"  ]] && requirement="findutils"
+      printf "\\e[1;35mInstalling %s on the system...\\e[0m " "${requirement}"
+      (while :; do for c in / - \\ \|; do printf '%s\b' "$c"; sleep 1; done; done) &
+      curl -s ${repo_raw_files}/bin/pacapt | bash /dev/stdin --noconfirm -S "${requirement}" >/dev/null
+      { echo -ne "\\b"; printf ' \e[1;35m[DONE]\e[0m\n'; kill $! && wait $!; } 2>/dev/null
     }
-    git clone "${repo_git_url}" ~/dotfiles || {
-        echo -e "\e[1;31mFailed to clone the dotfiles repo in ~/dotfiles.\e[0m";
-        return 1;
-    }
-    echo -e "\e[1;32mYou can now run 'cd ~/dotfiles && make help' to start the dotfiles installation.\e[0m";
-    return 0
+  done
+  command -v git >/dev/null 2>&1 || {
+    echo -e "\\e[1;31mFailed to install git on the system, cannot clone the dotfiles repo.\\e[0m";
+    return 1;
+  }
+  git clone "${repo_git_url}" ~/dotfiles || {
+    echo -e "\\e[1;31mFailed to clone the dotfiles repo in ~/dotfiles.\\e[0m";
+    return 1;
+  }
+  echo -e "\\e[1;32mYou can now run 'cd ~/dotfiles && make help' to start the dotfiles installation.\\e[0m";
+  return 0
 }
 
 _bootstrap "${@}"

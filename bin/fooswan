@@ -1,326 +1,328 @@
 #!/usr/bin/env bash
 
+# vim: set tabstop=2 shiftwidth=2 expandtab:
+
 set -euo pipefail
 IFS=$'\n\t'
 
 function _source_utils() {
-	# shellcheck disable=SC1091
-	source "scripts/utils.sh"
-	return $?
+  # shellcheck disable=SC1091
+  source "scripts/utils.sh"
+  return $?
 }
 
 function _usage_main() {
-	_menu_lign
-	_menu_header
-	_menu_lign "[ OPTIONS ]"
-	_menu_option "-h|--help" "Print this helper."
-	_menu_option "-s|--silent" "Do not print the preparedeps output."
-	_menu_option "-v|--verbose" "Print useful variables for debugging purpose."
-	_menu_option "--create-symlinks" "Create the bin and dotfiles symlinks on the system."
-	_menu_option "--configure-system" "Configure the system."
-	_menu_option "--install-basic-tools" "Install the necessary basic tools on the system."
-	_menu_lign
-	_menu_footer
-	_menu_lign
-	return 0
+  _menu_lign
+  _menu_header
+  _menu_lign "[ OPTIONS ]"
+  _menu_option "-h|--help" "Print this helper."
+  _menu_option "-s|--silent" "Do not print the preparedeps output."
+  _menu_option "-v|--verbose" "Print useful variables for debugging purpose."
+  _menu_option "--create-symlinks" "Create the bin and dotfiles symlinks on the system."
+  _menu_option "--configure-system" "Configure the system."
+  _menu_option "--install-basic-tools" "Install the necessary basic tools on the system."
+  _menu_lign
+  _menu_footer
+  _menu_lign
+  return 0
 }
 
 function _install_basic_tools() {
-	_pinfo "Installing the basic tools"
-	basic_tools=(
-		ca-certificates
-		curl
-		wget
-		automake
-		make
-		bash-completion
-		bc
-		coreutils
-		file
-		findutils
-		gcc
-		git
-		grep
-		gzip
-		hostname
-		indent
-		jq
-		less
-		lsof
-		neovim
-		sudo
-		tar
-		tree
-		unzip
-		xclip
-		tmux
-		tig
-		ShellCheck
-		fzf
-	)
-	# pacapt is not available in the secure path
-	sudo env PATH="${PATH}" pacapt --noconfirm -Sy || true
-	# shellcheck disable=SC2068
-	sudo env PATH="${PATH}" pacapt --noconfirm -S ${basic_tools[@]}
-	# shellcheck disable=SC2181
-	if [[ $? -ne 0 ]] ; then
-		_pwarning "An error may have occured while installing the basic tools."
-	else
-		_psuccess "The basic tools were installed successfully."
-	fi
-	return 0
+  _pinfo "Installing the basic tools"
+  basic_tools=(
+    ca-certificates
+    curl
+    wget
+    automake
+    make
+    bash-completion
+    bc
+    coreutils
+    file
+    findutils
+    gcc
+    git
+    grep
+    gzip
+    hostname
+    indent
+    jq
+    less
+    lsof
+    neovim
+    sudo
+    tar
+    tree
+    unzip
+    xclip
+    tmux
+    tig
+    ShellCheck
+    fzf
+  )
+  # pacapt is not available in the secure path
+  sudo env PATH="${PATH}" pacapt --noconfirm -Sy || true
+  # shellcheck disable=SC2068
+  sudo env PATH="${PATH}" pacapt --noconfirm -S ${basic_tools[@]}
+  # shellcheck disable=SC2181
+  if [[ $? -ne 0 ]] ; then
+    _pwarning "An error may have occured while installing the basic tools."
+  else
+    _psuccess "The basic tools were installed successfully."
+  fi
+  return 0
 }
 
 function _install_advanced_tools() {
-	_pinfo "Installing the advanced tools"
-    function _install_advanced_tools_failed() {
-		_pwarning "An error may have occured while installing the advanced tools: ${1}"
-    }
-    (
-        sudo wget --quiet https://github.com/hadolint/hadolint/releases/download/v1.10.1/hadolint-Linux-x86_64 -O /usr/local/bin/hadolint ;
-        sudo chmod +x /usr/local/bin/hadolint ;
-    ) || { _install_advanced_tools_failed "hadolint"; return 1; }
-    # Installing bat
-    (
-        sudo wget --quiet https://github.com/sharkdp/bat/releases/download/v0.6.1/bat-v0.6.1-x86_64-unknown-linux-gnu.tar.gz -O /tmp/bat.tar.gz ;
-        mkdir /tmp/bat && tar -xf /tmp/bat.tar.gz -C /tmp/bat --strip-components=1 ;
-        sudo mv /tmp/bat/bat /usr/bin/bat && echo "alias cat='bat'" >> ~/.zshrc ;
-        sudo rm -R /tmp/bat.tar.gz /tmp/bat ;
-    ) || { _install_advanced_tools_failed "bat"; return 1; }
-	_psuccess "The advanced tools were installed successfully."
-	return 0
+  _pinfo "Installing the advanced tools"
+  function _install_advanced_tools_failed() {
+    _pwarning "An error may have occured while installing the advanced tools: ${1}"
+  }
+  (
+    sudo wget --quiet https://github.com/hadolint/hadolint/releases/download/v1.10.1/hadolint-Linux-x86_64 -O /usr/local/bin/hadolint ;
+    sudo chmod +x /usr/local/bin/hadolint ;
+  ) || { _install_advanced_tools_failed "hadolint"; return 1; }
+  # Installing bat
+  (
+    sudo wget --quiet https://github.com/sharkdp/bat/releases/download/v0.6.1/bat-v0.6.1-x86_64-unknown-linux-gnu.tar.gz -O /tmp/bat.tar.gz ;
+    mkdir /tmp/bat && tar -xf /tmp/bat.tar.gz -C /tmp/bat --strip-components=1 ;
+    sudo mv /tmp/bat/bat /usr/bin/bat && echo "alias cat='bat'" >> ~/.zshrc ;
+    sudo rm -R /tmp/bat.tar.gz /tmp/bat ;
+  ) || { _install_advanced_tools_failed "bat"; return 1; }
+  _psuccess "The advanced tools were installed successfully."
+  return 0
 }
 
 function _install_zsh() {
-	_pinfo "Installing ZSH on this sytem."
-	command -v zsh >/dev/null 2>&1 || {
-		sudo env PATH="${PATH}" pacapt --noconfirm -Sy || true;
-		sudo env PATH="${PATH}" pacapt --noconfirm -S zsh;
-		# On fedora, the PAM security is preventing us to switch without password
-		if [[ "$(_get_linux_flavor)" == "fedora" ]] ; then
-			sudo sed -i '/#%PAM-1.0/a auth       sufficient   pam_shells.so' /etc/pam.d/chsh;
-		fi
-		sudo su - "${TARGET_USER:-$(id -u -n)}" sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)";
-		# Restauring the PAM settings on fedora
-		if [[ "$(_get_linux_flavor)" == "fedora" ]] ; then
-			sudo sed -i '/auth       sufficient   pam_shells.so/d' /etc/pam.d/chsh;
-		fi
-		mv ~/.zshrc.pre-oh-my-zsh ~/.zshrc || true
-	}
+  _pinfo "Installing ZSH on this sytem."
+  command -v zsh >/dev/null 2>&1 || {
+    sudo env PATH="${PATH}" pacapt --noconfirm -Sy || true;
+    sudo env PATH="${PATH}" pacapt --noconfirm -S zsh;
+    # On fedora, the PAM security is preventing us to switch without password
+    if [[ "$(_get_linux_flavor)" == "fedora" ]] ; then
+      sudo sed -i '/#%PAM-1.0/a auth       sufficient   pam_shells.so' /etc/pam.d/chsh
+    fi
+    sudo su - "${TARGET_USER:-$(id -u -n)}" sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)";
+    # Restauring the PAM settings on fedora
+    if [[ "$(_get_linux_flavor)" == "fedora" ]] ; then
+      sudo sed -i '/auth       sufficient   pam_shells.so/d' /etc/pam.d/chsh;
+    fi
+    mv ~/.zshrc.pre-oh-my-zsh ~/.zshrc || true
+  }
 }
 
 function _install_conan() {
-	_pinfo "Installing Conan on this sytem."
-	command -v conan >/dev/null 2>&1 || {
-		pip3 install --user  conan;
-		pip3 install --user -r https://raw.githubusercontent.com/conan-io/conan/develop/conans/requirements.txt;
-		pip3 install --user -r https://raw.githubusercontent.com/conan-io/conan/develop/conans/requirements_dev.txt;
-		conan profile new --detect default;
-	}
+  _pinfo "Installing Conan on this sytem."
+  command -v conan >/dev/null 2>&1 || {
+    pip3 install --user  conan
+    pip3 install --user -r https://raw.githubusercontent.com/conan-io/conan/develop/conans/requirements.txt
+    pip3 install --user -r https://raw.githubusercontent.com/conan-io/conan/develop/conans/requirements_dev.txt
+    conan profile new --detect default
+  }
 }
 
 function _install_vscode() {
-	local flavor
-	_pinfo "Installing Visual Studio Code on this sytem."
-	command -v code >/dev/null 2>&1 || {
-		if [[ "${flavor}" == "fedora" ]] ; then
-			sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
-			sudo sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo'
-			dnf check-update
-			sudo dnf install code dbus-devel gtk3-devel libnotify-devel \
-				libgnome-keyring-devel xorg-x11-server-utils libcap-devel \
-				cups-devel libXtst-devel alsa-lib-devel libXrandr-devel \
-				GConf2-devel nss-devel
-		fi
-	}
+  local flavor
+  _pinfo "Installing Visual Studio Code on this sytem."
+  command -v code >/dev/null 2>&1 || {
+    if [[ "${flavor}" == "fedora" ]] ; then
+      sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
+      sudo sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo'
+      dnf check-update
+      sudo dnf install code dbus-devel gtk3-devel libnotify-devel \
+        libgnome-keyring-devel xorg-x11-server-utils libcap-devel \
+        cups-devel libXtst-devel alsa-lib-devel libXrandr-devel \
+        GConf2-devel nss-devel
+    fi
+  }
 }
 
 function _configure_neovim() {
-	_pinfo "Configuring neovim"
-	# User alias vim dotfiles to neovim
-	mkdir -p "${XDG_CONFIG_HOME:=${HOME}/.config}"
-	ln -snf "${HOME}/.vim" "${XDG_CONFIG_HOME}/nvim"
-	ln -snf "${HOME}/.vimrc" "${XDG_CONFIG_HOME}/nvim/init.vim"
-	mkdir "${HOME}/.undodir" && chown -R "${TARGET_USER}:${TARGET_USER}" "${_}"
-	# Root alias vim dotfiles to neovim
-	sudo mkdir -p "/root/.config"
-	sudo ln -snf "${HOME}/.vim" "/root/.config/nvim"
-	sudo ln -snf "${HOME}/.vimrc" "/root/.config/nvim/init.vim"
-	sudo ln -snf "${HOME}/.vim" "/root/.vim"
-	sudo ln -snf "${HOME}/.vimrc" "/root/.vimrc"
-	sudo mkdir "/root/.undodir"
-	# update alternatives to neovim
-	sudo update-alternatives --install /usr/bin/vi vi "$(which nvim)" 1
-	echo 1 | sudo update-alternatives --config vi
-	sudo update-alternatives --install /usr/bin/vim vim "$(which nvim)" 1
-	echo 1 | sudo update-alternatives --config vim
-	sudo update-alternatives --install /usr/bin/editor editor "$(which nvim)" 1
-	echo 1 | sudo update-alternatives --config editor
-	# install things needed for deoplete for vim
-	sudo env PATH="${PATH}" pacapt --noconfirm -Sy || true
-	sudo env PATH="${PATH}" pacapt --noconfirm -S python3-pip python3-setuptools
-	pip install --user -U pip setuptools wheel neovim jedi
-	git submodule update --init --recursive || { _perror "Failed to initialize the vim configuration submodules."; return 1; }
-	git submodule foreach git pull --recurse-submodules origin master || { _perror "Failed to pull the latest version of the vim configuration submodules."; return 1; }
-	_psuccess "Installed VIM plugins:"
-	git submodule --quiet foreach bash -c "echo -e \"* [\$(git config --get remote.origin.url | sed 's#https://##' | sed 's#git://##' | sed 's/.git//')](\$(git config --get remote.origin.url))\""
-	nvim +UpdateRemotePlugins +qall >/dev/null 2>&1
-	return 0
+  _pinfo "Configuring neovim"
+  # User alias vim dotfiles to neovim
+  mkdir -p "${XDG_CONFIG_HOME:=${HOME}/.config}"
+  ln -snf "${HOME}/.vim" "${XDG_CONFIG_HOME}/nvim"
+  ln -snf "${HOME}/.vimrc" "${XDG_CONFIG_HOME}/nvim/init.vim"
+  mkdir "${HOME}/.undodir" && chown -R "${TARGET_USER}:${TARGET_USER}" "${_}"
+  # Root alias vim dotfiles to neovim
+  sudo mkdir -p "/root/.config"
+  sudo ln -snf "${HOME}/.vim" "/root/.config/nvim"
+  sudo ln -snf "${HOME}/.vimrc" "/root/.config/nvim/init.vim"
+  sudo ln -snf "${HOME}/.vim" "/root/.vim"
+  sudo ln -snf "${HOME}/.vimrc" "/root/.vimrc"
+  sudo mkdir "/root/.undodir"
+  # update alternatives to neovim
+  sudo update-alternatives --install /usr/bin/vi vi "$(which nvim)" 1
+  echo 1 | sudo update-alternatives --config vi
+  sudo update-alternatives --install /usr/bin/vim vim "$(which nvim)" 1
+  echo 1 | sudo update-alternatives --config vim
+  sudo update-alternatives --install /usr/bin/editor editor "$(which nvim)" 1
+  echo 1 | sudo update-alternatives --config editor
+  # install things needed for deoplete for vim
+  sudo env PATH="${PATH}" pacapt --noconfirm -Sy || true
+  sudo env PATH="${PATH}" pacapt --noconfirm -S python3-pip python3-setuptools
+  pip install --user -U pip setuptools wheel neovim jedi
+  git submodule update --init --recursive || { _perror "Failed to initialize the vim configuration submodules."; return 1; }
+  git submodule foreach git pull --recurse-submodules origin master || { _perror "Failed to pull the latest version of the vim configuration submodules."; return 1; }
+  _psuccess "Installed VIM plugins:"
+  git submodule --quiet foreach bash -c "echo -e \"* [\$(git config --get remote.origin.url | sed 's#https://##' | sed 's#git://##' | sed 's/.git//')](\$(git config --get remote.origin.url))\""
+  nvim +UpdateRemotePlugins +qall >/dev/null 2>&1
+  return 0
 }
 
 function _configure_python() {
-	_pinfo "Configuring default system Python to be Python 3"
-	sudo update-alternatives --install /usr/bin/python python "$(which python3)" 1
-	sudo update-alternatives --install /usr/bin/pip pip "$(which pip3)" 1
-	echo 1 | sudo update-alternatives --config python
-	echo 1 | sudo update-alternatives --config pip
-	return 0
+  _pinfo "Configuring default system Python to be Python 3"
+  sudo update-alternatives --install /usr/bin/python python "$(which python3)" 1
+  sudo update-alternatives --install /usr/bin/pip pip "$(which pip3)" 1
+  echo 1 | sudo update-alternatives --config python
+  echo 1 | sudo update-alternatives --config pip
+  return 0
 }
 
 function _configure_system_sudo() {
-	local flavor
-	_pinfo "Configuring the user ${TARGET_USER:-$(id -u -n)} as a passwordless sudoer"
-	# Making sure sudo is indeed installed
-	command -v sudo >/dev/null 2>&1 || { _perror "Sudo is not installed on the system."; return 1; }
-	# Testing if user is already a sudoer
-	sudo -k
-	sudo -n true >/dev/null 2>&1 &&
-		{ _psuccess "User ${TARGET_USER:-$(id -u -n)} is already a passwordless sudoer on this system." && return 0 ; }
-	flavor="$(_get_linux_flavor)"
-	if [[ "${flavor}" == "fedora" ]] ; then
-		sudo gpasswd wheel -a "${TARGET_USER:-$(id -u -n)}" >/dev/null
-		sudo sed -i 's/^#\s*\(%wheel\s\+ALL=(ALL)\s\+NOPASSWD:\s\+ALL\)/\1/' /etc/sudoers
-	elif [[ "${flavor}" == "rhel" ]] ; then
-		sudo usermod -aG wheel "${TARGET_USER:-$(id -u -n)}" >/dev/null
-		sudo sed -i 's/^#\s*\(%wheel\s\+ALL=(ALL)\s\+NOPASSWD:\s\+ALL\)/\1/' /etc/sudoers
-	elif [[ "${flavor}" == "ubuntu" ]] ; then
-		sudo adduser "${TARGET_USER:-$(id -u -n)}" sudo >/dev/null
-		sudo bash -c "echo \"${TARGET_USER:-$(id -u -n)} ALL=(ALL) NOPASSWD:ALL\" > \"/etc/sudoers.d/${TARGET_USER:-$(id -u -n)}\""
-	else
-		_perror "Cannot setup sudo on this system: ${flavor}" && return 1
-	fi
-	# Testing if user is now a sudoer
-	sudo -k
-	# shellcheck disable=SC2181
-	sudo -n true >/dev/null 2>&1
-	if [[ $? -ne 0 ]] ; then
-		_perror "Failed to configure the user ${TARGET_USER:-$(id -u -n)} as a passwordless sudoer on this system." && return 1
-	else
-		_psuccess "User ${TARGET_USER:-$(id -u -n)} is configured as a passwordless sudoer."
-	fi
-	return 0
-}
+  local flavor
+  _pinfo "Configuring the user ${TARGET_USER:-$(id -u -n)} as a passwordless sudoer"
+  # Making sure sudo is indeed installed
+  command -v sudo >/dev/null 2>&1 || { _perror "Sudo is not installed on the system."; return 1; }
+  # Testing if user is already a sudoer
+  sudo -k
+  sudo -n true >/dev/null 2>&1 &&
+    { _psuccess "User ${TARGET_USER:-$(id -u -n)} is already a passwordless sudoer on this system." && return 0 ; }
+    flavor="$(_get_linux_flavor)"
+    if [[ "${flavor}" == "fedora" ]] ; then
+      sudo gpasswd wheel -a "${TARGET_USER:-$(id -u -n)}" >/dev/null
+      sudo sed -i 's/^#\s*\(%wheel\s\+ALL=(ALL)\s\+NOPASSWD:\s\+ALL\)/\1/' /etc/sudoers
+    elif [[ "${flavor}" == "rhel" ]] ; then
+      sudo usermod -aG wheel "${TARGET_USER:-$(id -u -n)}" >/dev/null
+      sudo sed -i 's/^#\s*\(%wheel\s\+ALL=(ALL)\s\+NOPASSWD:\s\+ALL\)/\1/' /etc/sudoers
+    elif [[ "${flavor}" == "ubuntu" ]] ; then
+      sudo adduser "${TARGET_USER:-$(id -u -n)}" sudo >/dev/null
+      sudo bash -c "echo \"${TARGET_USER:-$(id -u -n)} ALL=(ALL) NOPASSWD:ALL\" > \"/etc/sudoers.d/${TARGET_USER:-$(id -u -n)}\""
+    else
+      _perror "Cannot setup sudo on this system: ${flavor}" && return 1
+    fi
+    # Testing if user is now a sudoer
+    sudo -k
+    sudo -n true >/dev/null 2>&1
+    # shellcheck disable=SC2181
+    if [[ $? -ne 0 ]] ; then
+      _perror "Failed to configure the user ${TARGET_USER:-$(id -u -n)} as a passwordless sudoer on this system." && return 1
+    else
+      _psuccess "User ${TARGET_USER:-$(id -u -n)} is configured as a passwordless sudoer."
+    fi
+    return 0
+  }
 
 function _install_powerline_fonts() {
-	_pinfo "Installing the powerline fonts on this sytem."
-	git clone https://github.com/powerline/fonts.git --depth=1 >/dev/null || {
-		_perror "Failed to clone the powerline fonts repo on this system.";
-		return 1;
-	}
-	# shellcheck disable=SC2015
-	cd fonts && ./install.sh || {
-		_perror "Failed to install the powerline fonts on this system.";
-		return 1;
-	}
-	# shellcheck disable=SC2015
-	cd .. && rm -rf fonts || { return 1; }
-	_psuccess "The powerline fonts are successfully installed."
-	return 0
+  _pinfo "Installing the powerline fonts on this sytem."
+  git clone https://github.com/powerline/fonts.git --depth=1 >/dev/null || {
+    _perror "Failed to clone the powerline fonts repo on this system.";
+    return 1;
+  }
+  # shellcheck disable=SC2015
+  cd fonts && ./install.sh || {
+    _perror "Failed to install the powerline fonts on this system.";
+    return 1;
+  }
+  # shellcheck disable=SC2015
+  cd .. && rm -rf fonts || { return 1; }
+  _psuccess "The powerline fonts are successfully installed."
+  return 0
 }
 
 function _configure_system() {
-	_configure_system_sudo
-	_install_powerline_fonts
+  _configure_system_sudo
+  _install_powerline_fonts
 }
 
 function _symlinks_dotfiles() {
-	local f
-	# Adding aliases for dotfiles
-	_pinfo "Creating symlinks for dotfiles"
-	# shellcheck disable=SC2044
-	for file in $(find "$(pwd)" -maxdepth 1 -name ".*" -not -name ".gitignore" -not -name ".git"); do
-		f="$(basename "${file}")"
-		ln -sfn "${file}" "${HOME}/${f}"
-		# shellcheck disable=SC2181
-		if [[ $? -eq 0 ]] ; then
-			_psuccess "${HOME}/${f} -> ${file}"
-		else
-			_perror "Symlinking failed: ${HOME}/${f} -> ${file}"
-		fi
-	done
-	_pinfo "Creating symlinks for other stuff"
-	ln -fn "$(pwd)/gitignore" "${HOME}/.gitignore"
-	# shellcheck disable=SC2181
-	if [[ $? -eq 0 ]] ; then
-		_psuccess "${HOME}/.gitignore -> $(pwd)/gitignore"
-	else
-		_perror "Symlinking failed: ${HOME}/.gitignore -> $(pwd)/gitignore"
-	fi
-	return 0
+  local f
+  # Adding aliases for dotfiles
+  _pinfo "Creating symlinks for dotfiles"
+  # shellcheck disable=SC2044
+  for file in $(find "$(pwd)" -maxdepth 1 -name ".*" -not -name ".gitignore" -not -name ".git"); do
+    f="$(basename "${file}")"
+    ln -sfn "${file}" "${HOME}/${f}"
+    # shellcheck disable=SC2181
+    if [[ $? -eq 0 ]] ; then
+      _psuccess "${HOME}/${f} -> ${file}"
+    else
+      _perror "Symlinking failed: ${HOME}/${f} -> ${file}"
+    fi
+  done
+  _pinfo "Creating symlinks for other stuff"
+  ln -fn "$(pwd)/gitignore" "${HOME}/.gitignore"
+  # shellcheck disable=SC2181
+  if [[ $? -eq 0 ]] ; then
+    _psuccess "${HOME}/.gitignore -> $(pwd)/gitignore"
+  else
+    _perror "Symlinking failed: ${HOME}/.gitignore -> $(pwd)/gitignore"
+  fi
+  return 0
 }
 
 function _system_check() {
-	local supported_sys
-	supported_sys=(fedora rhel ubuntu)
-	__sys=$(_get_linux_flavor)
-	if ! _isinarray "${__sys}" "${supported_sys[@]}" ; then
-		_perror "System is not supported: ${__sys}"
-		unset __sys
-		return 1
-	fi
-	return 0
+  local supported_sys
+  supported_sys=(fedora rhel ubuntu)
+  __sys=$(_get_linux_flavor)
+  if ! _isinarray "${__sys}" "${supported_sys[@]}" ; then
+    _perror "System is not supported: ${__sys}"
+    unset __sys
+    return 1
+  fi
+  return 0
 }
 
 function _main() {
-	_source_utils
-	_parse_args "${@}"
-	_system_check
-	_get_user
-	if [[ "${__configure_system:-}" == true  ]]; then
-		_configure_system
-	fi
-	if [[ "${__install_basic_tools:-}" == true  ]]; then
-		_install_basic_tools
-		_install_advanced_tools
-		_install_zsh
-		_install_conan
-		_configure_python
-		_configure_neovim
-	fi
-	if [[ "${__symlinks_dotfiles:-}" == true  ]]; then
-		_symlinks_dotfiles
-	fi
-	return 0
+  _source_utils
+  _parse_args "${@}"
+  _system_check
+  _get_user
+  if [[ "${__configure_system:-}" == true  ]]; then
+    _configure_system
+  fi
+  if [[ "${__install_basic_tools:-}" == true  ]]; then
+    _install_basic_tools
+    _install_advanced_tools
+    _install_zsh
+    _install_conan
+    _configure_python
+    _configure_neovim
+  fi
+  if [[ "${__symlinks_dotfiles:-}" == true  ]]; then
+    _symlinks_dotfiles
+  fi
+  return 0
 }
 
 function _parse_args() {
-	for arg in "${@}" ; do
-		case "${arg}" in
-			-h|--help)
-				_usage_main
-				exit 0
-				;;
-			-s|--silent)
-				# shellcheck disable=SC2034
-				_silent=true
-				;;
-			-v|--verbose)
-				# shellcheck disable=SC2034
-				_verbose=true
-				;;
-			--symlinks-dotfiles)
-				__symlinks_dotfiles=true
-				;;
-			--configure-system)
-				__configure_system=true
-				;;
-			--install-basic-tools)
-				__install_basic_tools=true
-				;;
-			*) _parsed_args=("${_parsed_args[@]:-} ${arg}")
-		esac
-	done
-	return 0
+  for arg in "${@}" ; do
+    case "${arg}" in
+      -h|--help)
+        _usage_main
+        exit 0
+        ;;
+      -s|--silent)
+        # shellcheck disable=SC2034
+        _silent=true
+        ;;
+      -v|--verbose)
+        # shellcheck disable=SC2034
+        _verbose=true
+        ;;
+      --symlinks-dotfiles)
+        __symlinks_dotfiles=true
+        ;;
+      --configure-system)
+        __configure_system=true
+        ;;
+      --install-basic-tools)
+        __install_basic_tools=true
+        ;;
+      *) _parsed_args=("${_parsed_args[@]:-} ${arg}")
+    esac
+  done
+  return 0
 }
 
 _main "${@}"
