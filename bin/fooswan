@@ -59,6 +59,7 @@ function _install_basic_tools() {
     tig
     ShellCheck
     fzf
+    ripgrep
   )
   # pacapt is not available in the secure path
   sudo env PATH="${PATH}" pacapt --noconfirm -Sy || true
