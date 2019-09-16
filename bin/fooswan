@@ -108,6 +108,7 @@ function _install_zsh() {
       sudo sed -i '/auth       sufficient   pam_shells.so/d' /etc/pam.d/chsh;
     fi
     mv ~/.zshrc.pre-oh-my-zsh ~/.zshrc || true
+    sudo chsh -s /usr/bin/zsh "${TARGET_USER:-$(id -u -n)}"
   }
 }
 
