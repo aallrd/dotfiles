@@ -80,15 +80,15 @@ function _install_advanced_tools() {
     _pwarning "An error may have occured while installing the advanced tools: ${1}"
   }
   (
-    sudo wget --quiet https://github.com/hadolint/hadolint/releases/download/v1.10.1/hadolint-Linux-x86_64 -O /usr/local/bin/hadolint ;
-    sudo chmod +x /usr/local/bin/hadolint ;
+    sudo wget --quiet https://github.com/hadolint/hadolint/releases/download/v1.10.1/hadolint-Linux-x86_64 -O /usr/local/bin/hadolint
+    sudo chmod +x /usr/local/bin/hadolint
   ) || { _install_advanced_tools_failed "hadolint"; return 1; }
   # Installing bat
   (
-    sudo wget --quiet https://github.com/sharkdp/bat/releases/download/v0.6.1/bat-v0.6.1-x86_64-unknown-linux-gnu.tar.gz -O /tmp/bat.tar.gz ;
-    mkdir /tmp/bat && tar -xf /tmp/bat.tar.gz -C /tmp/bat --strip-components=1 ;
-    sudo mv /tmp/bat/bat /usr/bin/bat && echo "alias cat='bat'" >> ~/.zshrc ;
-    sudo rm -R /tmp/bat.tar.gz /tmp/bat ;
+    sudo wget --quiet https://github.com/sharkdp/bat/releases/download/v0.6.1/bat-v0.6.1-x86_64-unknown-linux-gnu.tar.gz -O /tmp/bat.tar.gz
+    mkdir /tmp/bat && tar -xf /tmp/bat.tar.gz -C /tmp/bat --strip-components=1
+    sudo mv /tmp/bat/bat /usr/bin/bat
+    sudo rm -R /tmp/bat.tar.gz /tmp/bat
   ) || { _install_advanced_tools_failed "bat"; return 1; }
   _psuccess "The advanced tools were installed successfully."
   return 0
