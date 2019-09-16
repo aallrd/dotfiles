@@ -81,8 +81,10 @@ if tput setaf 1 &> /dev/null; then
   white=$(tput setaf 15);
   yellow=$(tput setaf 136);
 fi
+
 alias cat='bat'
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+# FZF configuration
+[ -f /usr/share/fzf/shell/key-bindings.zsh ] && source /usr/share/fzf/shell/key-bindings.zsh
 export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow -g "!{.git,node_modules}/*" 2> /dev/null'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
