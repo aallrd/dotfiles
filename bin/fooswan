@@ -232,9 +232,22 @@ function _install_powerline_fonts() {
   return 0
 }
 
+function _configure_ssh() {
+  # shellcheck disable=SC2046
+  ssh-keygen -t ed25519 -o -a 100 -f ~/.ssh/fooswan_$(date +%s) -N ''
+  cat <<EOF > ~/.ssh/config
+Host github.com
+  Hostname ssh.github.com
+  Port 443
+EOF
+  chmod 600 ~/.ssh/config
+  return 0
+}
+
 function _configure_system() {
   _configure_system_sudo
   _install_powerline_fonts
+  _configure_ssh
 }
 
 function _symlinks_dotfiles() {
