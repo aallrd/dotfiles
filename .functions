@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 function fdnfgroup() {
    fdnfgroup_usage() { echo "fdnfgroup <package>"; return 0; }
    if [[ -z ${1+x} || ${1} == "" ]] ; then fdnfgroup_usage; return 1; fi
@@ -5,4 +7,30 @@ function fdnfgroup() {
    pkg="${1}"
    dnf groupinfo '*' | sed -n '/Group:/h;/'"${pkg}"'/{x;p;x;p}'
    return 0
+}
+
+function ssh_remote_pubkey() {
+  local server user pubkey identity_file
+  server=${1:?missing remove server name parameter}
+  user=${2:-$USER}
+  pubkey="$(find "${HOME}"/.ssh/*.pub | tail -1)"
+  identity_file="${pubkey//.pub}"
+  echo "Configuring public key access for ${user}@${server}"
+
+  ssh-copy-id -i "${identity_file}" -o StrictHostKeyChecking=no "${user}@${server}"
+  cat <<EOF >> ~/.ssh/config
+
+Host ${server}
+  Hostname ${server}
+  IdentityFile ${identity_file}
+  StrictHostKeyChecking no
+EOF
+  test=$(ssh -o BatchMode=yes -o ConnectTimeout=3 "${user}@${server}" true 2>/dev/null && echo 0 || echo 1)
+  if [[ ${test} -eq 0 ]] ; then
+    echo "Public key access configured successfully."
+    return 0
+  else
+    echo "Failed to configure the public key access for ${user}@${server}."
+    return 1
+  fi
 }
