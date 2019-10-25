@@ -234,11 +234,15 @@ function _install_powerline_fonts() {
 
 function _configure_ssh() {
   # shellcheck disable=SC2046
-  ssh-keygen -t ed25519 -o -a 100 -f ~/.ssh/fooswan_$(date +%s) -N ''
-  cat <<EOF > ~/.ssh/config
+  local key_name
+  key_name="fooswan_$(git rev-parse --short HEAD)"
+  ssh-keygen -t ed25519 -o -a 100 -f "${HOME}/.ssh/${key_name}" -N ''
+  _pinfo "$(cat "${HOME}/.ssh/${key_name}.pub")"
+  cat <<EOF >> ~/.ssh/config
 Host github.com
   Hostname ssh.github.com
   Port 443
+  IdentityFile ~/.ssh/${key_name}
 EOF
   chmod 600 ~/.ssh/config
   return 0
