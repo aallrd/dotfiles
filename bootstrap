@@ -3,10 +3,11 @@
 # vim: set tabstop=2 shiftwidth=2 expandtab:
 
 function _bootstrap() {
-  local repo_git_url repo_raw_files requirements
+  local repo_git_url repo_raw_files requirements repo_folder
   repo_git_url='https://github.com/aallrd/dotfiles.git'
   repo_raw_files='https://raw.githubusercontent.com/aallrd/dotfiles/master'
   requirements=("git" "find" "sudo")
+  repo_folder="${HOME}/dotfiles"
   for requirement in "${requirements[@]}" ; do
     command -v "${requirement}" >/dev/null 2>&1 || {
       [[ "${requirement}" = "find"  ]] && requirement="findutils"
@@ -20,11 +21,12 @@ function _bootstrap() {
     echo -e "\\e[1;31mFailed to install git on the system, cannot clone the dotfiles repo.\\e[0m";
     return 1;
   }
-  git clone "${repo_git_url}" ~/dotfiles || {
-    echo -e "\\e[1;31mFailed to clone the dotfiles repo in ~/dotfiles.\\e[0m";
+  git clone "${repo_git_url}" "${repo_folder}" || {
+    echo -e "\\e[1;31mFailed to clone the dotfiles repo in ${repo_folder}.\\e[0m";
     return 1;
   }
-  echo -e "\\e[1;32mYou can now run 'cd ~/dotfiles && make help' to start the dotfiles installation.\\e[0m";
+  echo -e "\\e[1;32mUsing revision: $(cd "${repo_folder}" && git rev-parse --short HEAD)\\e[0m";
+  echo -e "\\e[1;32mYou can now run 'cd ${repo_folder} && make help' to start the dotfiles installation.\\e[0m";
   return 0
 }
 
