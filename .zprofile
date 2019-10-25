@@ -1,5 +1,9 @@
 #!/bin/zsh
 
+#Add auto completion support to zsh
+autoload -U +X bashcompinit && bashcompinit
+autoload -U +X compinit && compinit
+
 # Load the dotfiles
 for file in ~/.{aliases,dockerfunc,functions}; do
 	if [[ -r "$file" ]] && [[ -f "$file" ]]; then
