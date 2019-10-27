@@ -95,7 +95,7 @@ function _install_advanced_tools() {
 }
 
 function _install_zsh() {
-  _pinfo "Installing ZSH on this sytem."
+  _pinfo "Installing ZSH on this system."
   command -v zsh >/dev/null 2>&1 || {
     sudo env PATH="${PATH}" pacapt --noconfirm -Sy || true;
     sudo env PATH="${PATH}" pacapt --noconfirm -S zsh;
@@ -114,7 +114,7 @@ function _install_zsh() {
 }
 
 function _install_conan() {
-  _pinfo "Installing Conan on this sytem."
+  _pinfo "Installing Conan on this system."
   command -v conan >/dev/null 2>&1 || {
     pip3 install --user  conan
     pip3 install --user -r https://raw.githubusercontent.com/conan-io/conan/develop/conans/requirements.txt
@@ -125,7 +125,7 @@ function _install_conan() {
 
 function _install_vscode() {
   local flavor
-  _pinfo "Installing Visual Studio Code on this sytem."
+  _pinfo "Installing Visual Studio Code on this system."
   command -v code >/dev/null 2>&1 || {
     if [[ "${flavor}" == "fedora" ]] ; then
       sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
@@ -216,7 +216,7 @@ function _configure_system_sudo() {
   }
 
 function _install_powerline_fonts() {
-  _pinfo "Installing the powerline fonts on this sytem."
+  _pinfo "Installing the powerline fonts on this system."
   git clone https://github.com/powerline/fonts.git --depth=1 >/dev/null || {
     _perror "Failed to clone the powerline fonts repo on this system.";
     return 1;
