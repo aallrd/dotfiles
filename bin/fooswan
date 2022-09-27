@@ -116,9 +116,9 @@ function _install_zsh() {
 function _install_conan() {
   _pinfo "Installing Conan on this system."
   command -v conan >/dev/null 2>&1 || {
-    pip install --user  conan
-    pip install --user -r https://raw.githubusercontent.com/conan-io/conan/develop/conans/requirements.txt
-    pip install --user -r https://raw.githubusercontent.com/conan-io/conan/develop/conans/requirements_dev.txt
+    python -m pip install --user  conan
+    python -m pip install --user -r https://raw.githubusercontent.com/conan-io/conan/develop/conans/requirements.txt
+    python -m pip install --user -r https://raw.githubusercontent.com/conan-io/conan/develop/conans/requirements_dev.txt
     conan profile new --detect default
   }
 }
@@ -163,7 +163,7 @@ function _configure_neovim() {
   # install things needed for deoplete for vim
   sudo env PATH="${PATH}" pacapt --noconfirm -Sy || true
   sudo env PATH="${PATH}" pacapt --noconfirm -S python3-pip python3-setuptools
-  pip install --user -U pip setuptools wheel neovim jedi
+  python -m pip install --user -U pip setuptools wheel neovim jedi
   git submodule update --init --recursive || { _perror "Failed to initialize the vim configuration submodules."; return 1; }
   git submodule foreach git pull --recurse-submodules origin master || { _perror "Failed to pull the latest version of the vim configuration submodules."; return 1; }
   _psuccess "Installed VIM plugins:"
@@ -173,11 +173,9 @@ function _configure_neovim() {
 }
 
 function _configure_python() {
-  _pinfo "Configuring default system Python to be Python 3"
-  sudo update-alternatives --install /usr/bin/python python "$(which python3)" 1
-  sudo update-alternatives --install /usr/bin/pip pip "$(which pip3)" 1
-  echo 1 | sudo update-alternatives --config python
-  echo 1 | sudo update-alternatives --config pip
+  _pinfo "Configuring default system Python"
+  sudo env PATH="${PATH}" pacapt --noconfirm -S python3-pip
+  sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 1
   export PATH="${HOME}/.local/bin:${PATH:+:${PATH}}"
   return 0
 }
