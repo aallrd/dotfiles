@@ -304,7 +304,7 @@ function _main() {
     _install_advanced_tools
     _install_zsh
     _configure_python
-    _install_conan
+    #_install_conan
     _configure_neovim
   fi
   if [[ "${__symlinks_dotfiles:-}" == true  ]]; then
